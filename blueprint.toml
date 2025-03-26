@@ -1,0 +1,245 @@
+name = "rhel8-baseline"
+description = "Baseline RHEL 8 image"
+version = "0.1.0"
+modules = []
+groups = []
+
+[[packages]]
+name = "vim"
+version = "*"
+
+[[packages]]
+name = "wget"
+version = "*"
+
+[[packages]]
+name = "cloud-init"
+version = "*"
+
+[[packages]]
+name = "openssh-server"
+version = "*"
+
+[[packages]]
+name = "yum-utils"
+version = "*"
+
+[[packages]]
+name = "curl"
+version = "*"
+
+[[packages]]
+name = "jq"
+version = "*"
+
+[[packages]]
+name = "git"
+version = "*"
+
+[[packages]]
+name = "python3"
+version = "*"
+
+[[packages]]
+name = "python3-pip"
+version = "*"
+
+[[packages]]
+name = "ansible"
+version = "*"
+
+[[packages]]
+name = "chrony"
+version = "*"
+
+[[packages]]
+name = "firewalld"
+version = "*"
+
+[[packages]]
+name = "selinux-policy-targeted"
+version = "*"
+
+[[packages]]
+name = "tuned"
+version = "*"
+
+[[packages]]
+name = "dracut-config-generic"
+version = "*"
+
+[[packages]]
+name = "dracut-config-rescue"
+version = "*"
+
+[[packages]]
+name = "grub2"
+version = "*"
+
+[[packages]]
+name = "grub2-tools"
+version = "*"
+
+[[packages]]
+name = "grub2-tools-minimal"
+version = "*"
+
+[[packages]]
+name = "grubby"
+version = "*"
+
+[[packages]]
+name = "kernel"
+version = "*"
+
+[[packages]]
+name = "kernel-tools"
+version = "*"
+
+[[packages]]
+name = "kernel-modules"
+version = "*"
+
+[[packages]]
+name = "kernel-modules-extra"
+version = "*"
+
+[[packages]]
+name = "kernel-headers"
+version = "*"
+
+[[packages]]
+name = "kernel-devel"
+version = "*"
+
+[[packages]]
+name = "kernel-core"
+version = "*"
+
+[[packages]]
+name = "kernel-modules-core"
+version = "*"
+
+[[packages]]
+name = "kernel-modules-internal"
+version = "*"
+
+[[packages]]
+name = "kernel-modules-extra"
+version = "*"
+
+[[packages]]
+name = "kernel-modules-internal"
+version = "*"
+
+[[packages]]
+name = "kernel-modules-core"
+version = "*"
+
+[[packages]]
+name = "kernel-core"
+version = "*"
+
+[[packages]]
+name = "kernel-devel"
+version = "*"
+
+[[packages]]
+name = "kernel-headers"
+version = "*"
+
+[[packages]]
+name = "kernel-modules"
+version = "*"
+
+[[packages]]
+name = "kernel-tools"
+version = "*"
+
+[[packages]]
+name = "kernel"
+version = "*"
+
+[[packages]]
+name = "grubby"
+version = "*"
+
+[[packages]]
+name = "grub2-tools-minimal"
+version = "*"
+
+[[packages]]
+name = "grub2-tools"
+version = "*"
+
+[[packages]]
+name = "grub2"
+version = "*"
+
+[[packages]]
+name = "dracut-config-rescue"
+version = "*"
+
+[[packages]]
+name = "dracut-config-generic"
+version = "*"
+
+[[packages]]
+name = "tuned"
+version = "*"
+
+[[packages]]
+name = "selinux-policy-targeted"
+version = "*"
+
+[[packages]]
+name = "firewalld"
+version = "*"
+
+[[packages]]
+name = "chrony"
+version = "*"
+
+[[packages]]
+name = "ansible"
+version = "*"
+
+[[packages]]
+name = "python3-pip"
+version = "*"
+
+[[packages]]
+name = "python3"
+version = "*"
+
+[[packages]]
+name = "git"
+version = "*"
+
+[[packages]]
+name = "jq"
+version = "*"
+
+[[packages]]
+name = "curl"
+version = "*"
+
+[[packages]]
+name = "yum-utils"
+version = "*"
+
+[[packages]]
+name = "openssh-server"
+version = "*"
+
+[[packages]]
+name = "cloud-init"
+version = "*"
+
+[[packages]]
+name = "wget"
+version = "*"
+
+[[packages]]
+name = "vim"
+version = "*" 

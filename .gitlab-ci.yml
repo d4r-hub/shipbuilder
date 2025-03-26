@@ -1,0 +1,79 @@
+image: registry.gitlab.com/ourrepo/rhel-image-builder:latest
+
+variables:
+  VAULT_ADDR: "https://vault.example.com"
+  COMPOSER_URL: "https://image-builder.example.com/api/image-builder/v1"
+  ARTIFACTORY_URL: "https://artifactory.example.com/rhel8-images/"
+
+stages:
+  - build_baseline
+  - customize_open
+  - transfer_images
+  - customize_closed
+
+build_baseline:
+  stage: build_baseline
+  script:
+    - echo "Building baseline image..."
+    - bash scripts/build_baseline.sh
+  artifacts:
+    paths:
+      - "rhel8-baseline.qcow2"
+    expire_in: 1 week
+  only:
+    - main
+  variables:
+    ARTIFACTORY_USER: ${VAULT_ARTIFACTORY_USER}
+    ARTIFACTORY_PASS: ${VAULT_ARTIFACTORY_PASS}
+
+customize_open:
+  stage: customize_open
+  image: hashicorp/packer:latest
+  script:
+    - echo "Building AWS AMI with Packer..."
+    - packer init packer/main.pkr.hcl
+    - packer build -var-file=packer/variables.open.pkrvars.hcl \
+                   -var="artifactory_user=${VAULT_ARTIFACTORY_USER}" \
+                   -var="artifactory_pass=${VAULT_ARTIFACTORY_PASS}" \
+                   packer/main.pkr.hcl
+  dependencies:
+    - build_baseline
+  only:
+    - main
+  variables:
+    AWS_ACCESS_KEY_ID: ${VAULT_AWS_ACCESS_KEY}
+    AWS_SECRET_ACCESS_KEY: ${VAULT_AWS_SECRET_KEY}
+    AWS_DEFAULT_REGION: "us-west-2"
+
+transfer_images:
+  stage: transfer_images
+  script:
+    - echo "Transferring images to closed environment..."
+    # Add your transfer logic here
+    # This could be a manual step or automated depending on your setup
+  dependencies:
+    - build_baseline
+  only:
+    - main
+  rules:
+    - when: manual
+      allow_failure: true
+
+customize_closed:
+  stage: customize_closed
+  image: hashicorp/packer:latest
+  script:
+    - echo "Building closed-environment image with Packer..."
+    - packer init packer/main.pkr.hcl
+    - packer build -var-file=packer/variables.closed.pkrvars.hcl \
+                   -var="artifactory_user=${VAULT_ARTIFACTORY_USER}" \
+                   -var="artifactory_pass=${VAULT_ARTIFACTORY_PASS}" \
+                   packer/main.pkr.hcl
+  dependencies:
+    - transfer_images
+  only:
+    - main
+  variables:
+    VSPHERE_USER: ${VAULT_VSPHERE_USER}
+    VSPHERE_PASSWORD: ${VAULT_VSPHERE_PASSWORD}
+    VSPHERE_SERVER: ${VAULT_VSPHERE_SERVER} 

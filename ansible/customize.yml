@@ -1,0 +1,96 @@
+---
+- hosts: all
+  become: true
+  vars:
+    artifactory_url: "{{ vault_artifactory_url }}"
+    artifactory_user: "{{ vault_artifactory_user }}"
+    artifactory_pass: "{{ vault_artifactory_pass }}"
+    custom_repo_url: "{{ vault_custom_repo_url }}"
+    custom_repo_gpg_key: "{{ vault_custom_repo_gpg_key }}"
+
+  tasks:
+    - name: Configure custom repository
+      yum_repository:
+        name: custom-repo
+        description: Custom Repository
+        baseurl: "{{ custom_repo_url }}"
+        gpgcheck: yes
+        gpgkey: "{{ custom_repo_gpg_key }}"
+        enabled: yes
+        state: present
+
+    - name: Install custom packages from internal repo
+      yum:
+        name:
+          - custom-package-1
+          - custom-package-2
+        state: present
+
+    - name: Download RPMs from Artifactory
+      get_url:
+        url: "{{ item.url }}"
+        dest: "/tmp/{{ item.filename }}"
+        user: "{{ artifactory_user }}"
+        password: "{{ artifactory_pass }}"
+        force_basic_auth: yes
+      loop:
+        - { url: "{{ artifactory_url }}/repos/rpms/myrpm-1.2.3.rpm", filename: "myrpm-1.2.3.rpm" }
+        - { url: "{{ artifactory_url }}/repos/rpms/otherpkg-4.5.6.rpm", filename: "otherpkg-4.5.6.rpm" }
+
+    - name: Install downloaded RPMs
+      yum:
+        name: "/tmp/{{ item }}"
+        state: present
+      loop:
+        - "myrpm-1.2.3.rpm"
+        - "otherpkg-4.5.6.rpm"
+
+    - name: Download Ansible collection from Artifactory
+      get_url:
+        url: "{{ artifactory_url }}/repos/ansible-collections/acme-mycollection-1.0.0.tar.gz"
+        dest: "/tmp/acme-mycollection-1.0.0.tar.gz"
+        user: "{{ artifactory_user }}"
+        password: "{{ artifactory_pass }}"
+        force_basic_auth: yes
+
+    - name: Install Ansible collection
+      command: ansible-galaxy collection install /tmp/acme-mycollection-1.0.0.tar.gz -f
+      args:
+        creates: "/usr/share/ansible/collections/ansible_collections/acme/mycollection"
+
+    - name: Configure system settings
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "{{ item.mode | default('0644') }}"
+      loop:
+        - { src: "chrony.conf.j2", dest: "/etc/chrony.conf" }
+        - { src: "firewalld.conf.j2", dest: "/etc/firewalld/firewalld.conf" }
+
+    - name: Enable and start services
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - chronyd
+        - firewalld
+
+    - name: Configure SELinux
+      selinux:
+        policy: targeted
+        state: enforcing
+
+    - name: Configure tuned profile
+      command: tuned-adm profile throughput-performance
+      args:
+        creates: "/etc/tuned/active_profile"
+
+    - name: Clean up temporary files
+      file:
+        path: "/tmp/{{ item }}"
+        state: absent
+      loop:
+        - "myrpm-1.2.3.rpm"
+        - "otherpkg-4.5.6.rpm"
+        - "acme-mycollection-1.0.0.tar.gz" 
